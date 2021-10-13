@@ -1,7 +1,10 @@
 const data = require('../data/zoo_data');
 
-function countAnimals(animal) {
-  // seu código aqui
+const { employees } = data;
+
+function getEmployeeByName(employeeName) {
+  if (employeeName === undefined) return {};
+  return employees.find((e) => e.firstName === employeeName || e.lastName === employeeName);
 }
 
-module.exports = countAnimals;
+module.exports = getEmployeeByName;
