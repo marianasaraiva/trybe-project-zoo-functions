@@ -1,10 +1,13 @@
-const data = require('../data/zoo_data');
+// Requisito discutido em grupo para realização.
+const { species, hours } = require('../data/zoo_data');
 
-const { species, hours } = data;
-
+// Seleciono os dias da semana através do Object.keys do objeto hours do arquivo zoo_data, formando um array.
 const diaDaSemana = Object.keys(hours);
-// Auxilio Tales Coelho monitoria para confecçao do objeto
+// Auxilio Tales Coelho monitoria para confecçao do objeto.
+// Função para criar o objeto geral com as informações do funcionamento do zoológico.
 const geralZoo = () => {
+  // O reduce irá montar o obejto de forma dinamica. a cada iteração ele armazena o objeto de acordo com o dia da semana informado pelo elem no acc e ao final, retornamos o acc com o resultado do array com o objeto completo. A regra de negócio para os values do objeto com chave officeHour foi atraves da notaçao de objeto para acessr o value com os hoários em que o zoo funciona.Já a chave exhibition, foi utilizada a HOF filter em species para acessar o array availability e assim, verificar se o animal está disponivel naquele dia da semana, usando o includes. Para finalizar, utilizo a HOF map para criar o array com o nome da espécie.
+  // A regra de negócio para montar o objeto precisou ser reatribuida, uma vez que o Monday tem uma característica especifica, por este motivo, depois de montado o objeto, acesso o objeto no dia que precisa ser modificado para setar o retorno como solicitado no requisito.
   const objeto = diaDaSemana.reduce((acc, elem) => {
     acc[elem] = {
       officeHour: `Open from ${hours[elem].open}am until ${hours[elem].close}pm`,
@@ -19,18 +22,24 @@ const geralZoo = () => {
   return objeto;
 };
 
+// Função que verifica a entrada de parametros e forma de pesquisa das informações do funcionamento do zoo.
 function getSchedule(scheduleTarget) {
+  // Verifico se função chamada sem parametros e retorno o objeto criado no geralZoo.
   if (scheduleTarget === undefined) {
     return geralZoo();
   }
-  const validaDadosInseridos = species
+
+  // const que aramzena lógica para verificar se encontra alguma especie com nome igual ao parametro informado, retornando true ou false. O if verifica se a palavra digitada é valida, caso não seja válida, entra no if e retorna o objeto da função zoo.
+  const verifica = species
     .some((cond) => scheduleTarget === cond.name);
-  if (!validaDadosInseridos && !diaDaSemana.includes(scheduleTarget)) {
+  if (!verifica && !diaDaSemana.includes(scheduleTarget)) {
     return geralZoo();
   }
+  // verifica qual é o dia da semana informado e retorna apenas as informações daquele dia informado. Utilizo o includes para verificar no array diaDaSemana tem a palavra informada e assim, trazer o objeto com as informações especificas.
   if (diaDaSemana.includes(scheduleTarget)) {
     return { [scheduleTarget]: geralZoo()[scheduleTarget] };
   }
+  // retorna o dia da semana que o animal está disponivel para visitação de acordo com o parametro informado,utilizei a HOF find para trazer o dia da semana que esta armazenado no array availability.
   return species.find((teste) => teste.name === scheduleTarget).availability;
 }
 
